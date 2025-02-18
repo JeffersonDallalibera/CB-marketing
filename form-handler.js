@@ -146,7 +146,7 @@ function openGoogleAuthPopup() {
   const top = (window.innerHeight - height) / 2;
 
   return window.open(
-    'https://accounts.google.com/o/oauth2/v2/auth?client_id=7992282028-6gibpp6ds295oboe3r905gllor8v70rs.apps.googleusercontent.com&redirect_uri=https://cb-marketing-sandy.vercel.app/oauth2callback&response_type=token&scope=email&state=state_parameter_passthrough_value',
+    'https://accounts.google.com/o/oauth2/v2/auth?client_id=7992282028-6gibpp6ds295oboe3r905gllor8v70rs.apps.googleusercontent.com&redirect_uri=https://cb-marketing-sandy.vercel.app/&response_type=token&scope=email&state=state_parameter_passthrough_value',
     'Google Login',
     `width=${width},height=${height},top=${top},left=${left}`
   );

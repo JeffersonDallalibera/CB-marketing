@@ -27,19 +27,23 @@ async function handleSubmit(event) {
 
   if (!auth2.isSignedIn.get()) {
     try {
-      await auth2.signIn(); // Solicitar login se o usuário não estiver autenticado
-      googleUser = auth2.currentUser.get();
+      const googleAuthWindow = openGoogleAuthPopup();
+
+      // Espera até que a janela de autenticação seja fechada
+      const authResult = await waitForAuthResult(googleAuthWindow);
+
+      if (authResult.error === 'popup_closed_by_user') {
+        throw new Error('O login foi cancelado pelo usuário.');
+      }
+
+      googleUser = authResult.user;
       console.log("Usuário autenticado:", googleUser);
       submitForm(); // Agora que o usuário está autenticado, podemos enviar o formulário
     } catch (error) {
       console.error("Erro no login:", error);
-      showMessage(
-        "error",
-        "Ocorreu um erro ao tentar fazer o login. Tente novamente."
-      );
+      showMessage("error", "Ocorreu um erro ao tentar fazer o login. Tente novamente.");
     }
   } else {
-    // Se já estiver autenticado, envia o formulário
     googleUser = auth2.currentUser.get();
     submitForm();
   }
@@ -132,6 +136,39 @@ function showMessage(type, text) {
       messageElement.remove();
     }, 5000);
   }
+}
+
+// Função para abrir o pop-up de login do Google
+function openGoogleAuthPopup() {
+  const width = 600;
+  const height = 600;
+  const left = (window.innerWidth - width) / 2;
+  const top = (window.innerHeight - height) / 2;
+
+  return window.open(
+    'https://accounts.google.com/o/oauth2/v2/auth?client_id=7992282028-6gibpp6ds295oboe3r905gllor8v70rs.apps.googleusercontent.com&redirect_uri=https://cb-marketing-sandy.vercel.app/oauth2callback&response_type=token&scope=email&state=state_parameter_passthrough_value',
+    'Google Login',
+    `width=${width},height=${height},top=${top},left=${left}`
+  );
+}
+
+// Função para esperar pela resposta do login do Google
+function waitForAuthResult(popup) {
+  return new Promise((resolve, reject) => {
+    const interval = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(interval);
+        reject({ error: 'popup_closed_by_user' });
+      }
+
+      try {
+        const result = popup.document.getElementById('authResult').innerText;
+        if (result) {
+          resolve({ user: result });
+        }
+      } catch (e) {}
+    }, 1000);
+  });
 }
 
 // Inicializa o Google OAuth2 assim que a página for carregada

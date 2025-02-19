@@ -33,7 +33,6 @@ async function handleSubmit(event) {
     // Enviar dados para o Google Sheets
     const response = await fetch(GOOGLE_WEB_APP_URL, {
       method: "POST",
-      mode: "no-cors",
       headers: {
         "Content-Type": "application/json",
       },

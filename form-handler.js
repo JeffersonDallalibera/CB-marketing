@@ -31,6 +31,10 @@ async function initializeSupabase() {
   }
 }
 
+document.addEventListener('DOMContentLoaded', () => { // Ensure DOM is fully loaded
+    const form = document.getElementById(FORM_ID);
+    form.addEventListener('submit', handleSubmit);
+  });
 
 // Function principal para manipular envio do formulário
 async function handleSubmit(event) {
@@ -89,7 +93,7 @@ async function handleSubmit(event) {
         // Redirecionar após um curto período
         setTimeout(() => {
             window.location.href = WHATSAPP_GROUP_URL;
-        }, 3000);
+        }, 1500);
     } catch (error) {
         // Mostrar mensagem de erro
         showMessage("error", "Ocorreu um erro ao enviar o formulário. Por favor, tente novamente mais tarde.");

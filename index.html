@@ -5,8 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Profissionais - CBMarketing</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Remova a duplicação da importação do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="input-formatter.js"></script>
+    <!-- Garanta que o script form-handler.js seja carregado após o Supabase -->
+    <script type="module" src="form-handler.js"></script>
+    
 </head>
 <body>
+
     <div class="container">
         <div class="header">
             <div class="logo">
@@ -81,9 +89,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="form-handler.js"></script>
-    <script src="input-formatter.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </body>
 </html>

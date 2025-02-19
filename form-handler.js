@@ -6,51 +6,10 @@ const GOOGLE_WEB_APP_URL =
   "https://script.google.com/macros/s/AKfycbw3HMBVAHM57BC9_wRrb8EroXycafmO3SNZGsX-2JLoTGq75PyZ1ARoiEE1d3MS-cU1/exec"; // Substitua pela URL do seu Google Script
 const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/Jes0lVOC5g8ElQTqUqG1Y6"; // Substitua pelo link real do grupo
 
-let googleUser = null;
-
-// Função para inicializar o Google OAuth2
-function initializeGoogleSignIn() {
-  gapi.load("auth2", function () {
-    gapi.auth2.init({
-      client_id:
-        "7992282028-6gibpp6ds295oboe3r905gllor8v70rs.apps.googleusercontent.com", // Substitua pelo seu Client ID
-    });
-  });
-}
-
-// Função para solicitar o login e redirecionar
+// Função principal para manipular envio do formulário
 async function handleSubmit(event) {
   event.preventDefault();
 
-  // Iniciar o login se não estiver autenticado
-  const auth2 = gapi.auth2.getAuthInstance();
-
-  if (!auth2.isSignedIn.get()) {
-    try {
-      const googleAuthWindow = openGoogleAuthPopup();
-
-      // Espera até que a janela de autenticação seja fechada
-      const authResult = await waitForAuthResult(googleAuthWindow);
-
-      if (authResult.error === 'popup_closed_by_user') {
-        throw new Error('O login foi cancelado pelo usuário.');
-      }
-
-      googleUser = authResult.user;
-      console.log("Usuário autenticado:", googleUser);
-      submitForm(); // Agora que o usuário está autenticado, podemos enviar o formulário
-    } catch (error) {
-      console.error("Erro no login:", error);
-      showMessage("error", "Ocorreu um erro ao tentar fazer o login. Tente novamente.");
-    }
-  } else {
-    googleUser = auth2.currentUser.get();
-    submitForm();
-  }
-}
-
-// Função para enviar o formulário após autenticação
-async function submitForm() {
   const form = document.getElementById(FORM_ID);
   const submitBtn = document.querySelector(SUBMIT_BTN_SELECTOR);
   const formContent = document.querySelector(FORM_CONTENT_SELECTOR);
@@ -71,13 +30,10 @@ async function submitForm() {
     const formData = new FormData(form);
     const formEntries = Object.fromEntries(formData.entries());
 
-    // Adicionar o token de acesso do Google ao corpo da requisição
-    formEntries.googleToken = googleUser.getAuthResponse().id_token;
-
     // Enviar dados para o Google Sheets
     const response = await fetch(GOOGLE_WEB_APP_URL, {
       method: "POST",
-      mode: "cors",
+      mode: "no-cors",
       headers: {
         "Content-Type": "application/json",
       },
@@ -137,41 +93,3 @@ function showMessage(type, text) {
     }, 5000);
   }
 }
-
-// Função para abrir o pop-up de login do Google
-function openGoogleAuthPopup() {
-  const width = 600;
-  const height = 600;
-  const left = (window.innerWidth - width) / 2;
-  const top = (window.innerHeight - height) / 2;
-
-  return window.open(
-    'https://accounts.google.com/o/oauth2/v2/auth?client_id=7992282028-6gibpp6ds295oboe3r905gllor8v70rs.apps.googleusercontent.com&redirect_uri=https://cb-marketing-sandy.vercel.app/&response_type=token&scope=email&state=state_parameter_passthrough_value',
-    'Google Login',
-    `width=${width},height=${height},top=${top},left=${left}`
-  );
-}
-
-// Função para esperar pela resposta do login do Google
-function waitForAuthResult(popup) {
-  return new Promise((resolve, reject) => {
-    const interval = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(interval);
-        reject({ error: 'popup_closed_by_user' });
-      }
-
-      try {
-        const result = popup.document.getElementById('authResult').innerText;
-        if (result) {
-          resolve({ user: result });
-        }
-      } catch (e) {}
-    }, 1000);
-  });
-}
-
-// Inicializa o Google OAuth2 assim que a página for carregada
-window.onload = function () {
-  initializeGoogleSignIn();
-};

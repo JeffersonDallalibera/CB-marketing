@@ -12,7 +12,7 @@
 }
 
 body {
-    background-color: #f8fafc;
+    background-color: var(--azul);
     display: flex;
     justify-content: center;
     align-items: center;

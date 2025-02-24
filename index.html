@@ -15,15 +15,8 @@
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <div class="logo">
-                <img src="img\cblogo.png" alt="CBMarketing Logo" class="logo-image">
-            </div>
-            <h1>Cadastro Profissional</h1>
-            <p>Complete o formulário para se juntar à nossa rede de profissionais</p>
-        </div>
-        
+    <div class="container"> 
+        <img src="img\imersao-adi.png" alt="CBMarketing Logo" class="logo-image">
         <div class="form-content">
             <form id="legal-form">
                 <div class="form-group">
@@ -79,6 +72,15 @@
                     <label for="cidade">Cidade*</label>
                     <input type="text" id="cidade" name="cidade" required>
                 </div>
+                <div class="form-group">
+                    <label>Atua na área?*</label>
+                    <select id="atuacao" name="atuacao" required>
+                        <option value="" disabled selected>Selecione uma opção</option>
+                        <option value="Sim">Sim</option>
+                        <option value="Nao">Não</option>
+                    </select>
+                </div>
+                            
                 
                 <button type="submit" class="submit-btn">Enviar Cadastro</button>
             </form>
